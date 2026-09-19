@@ -1,5 +1,6 @@
 import express, { type Express, type Request, type Response } from 'express';
 import session from "express-session";
+import cors from "cors";
 
 import usersRouter from "./routes/users.routes.js";
 import propertyRouter from "./routes/properties.routes.js";
@@ -14,6 +15,7 @@ import notificationsRouter from "./routes/notifications.routes.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
 
 import { connectDatabase } from './database.js';
+import { protect } from './middleware/auth.js';
 
 const app: Express = express();
 const port: number = 3000;
@@ -21,6 +23,13 @@ const port: number = 3000;
 await connectDatabase();
 
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(
   session({
@@ -35,17 +44,19 @@ app.use(
   })
 );
 
+app.use("/uploads", express.static("uploads"));
+
 app.use("/users", usersRouter);
-app.use("/properties", propertyRouter)
-app.use("/units", unitsRouter)
-app.use("/tenants", tenantsRouter);
-app.use("/leases", leasesRouter);
-app.use("/payments", paymentsRouter);
-app.use("/maintenance/staff", maintenanceStaffRouter);
-app.use("/maintenance", maintenanceRouter);
-app.use("/documents", documentsRouter);
-app.use("/notifications", notificationsRouter);
-app.use("/dashboard", dashboardRouter);
+app.use("/properties", protect, propertyRouter)
+app.use("/units", protect, unitsRouter)
+app.use("/tenants", protect, tenantsRouter);
+app.use("/leases", protect, leasesRouter);
+app.use("/payments", protect, paymentsRouter);
+app.use("/maintenance/staff", protect, maintenanceStaffRouter);
+app.use("/maintenance", protect, maintenanceRouter);
+app.use("/documents", protect, documentsRouter);
+app.use("/notifications", protect, notificationsRouter);
+app.use("/dashboard", protect, dashboardRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

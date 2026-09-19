@@ -8,12 +8,14 @@ import {
     deleteProperty
 } from "../controllers/properties.controller.js";
 
+import { upload } from '../middleware/upload.js';
+
 const router = Router();
 
 router.get("/", getProperties)
-router.post("/", insertProperties)
+router.post("/", upload.single("image"), insertProperties)
 router.get("/:id", getProperty)
-router.put("/:id", updateProperty)
+router.put("/:id", upload.single("image"), updateProperty)
 router.patch("/:id/status", updatePropertyStatus)
 router.delete("/:id", deleteProperty)
 

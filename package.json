@@ -12,14 +12,20 @@
     "start": "tsx src/app.ts"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "mongodb": "^7.6.0"
+    "mongodb": "^7.6.0",
+    "multer": "^2.4.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.19.0",
+    "@types/multer": "^2.2.0",
     "@types/node": "^26.6.1",
     "tsx": "^4.23.13"
   }

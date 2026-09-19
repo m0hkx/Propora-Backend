@@ -11,6 +11,10 @@ dist/
 build/
 out/
 
+# Uploaded user files (directory structure kept via .gitkeep)
+uploads/**/*
+!uploads/**/.gitkeep
+
 # Logs
 logs/
 *.log

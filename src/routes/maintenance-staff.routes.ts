@@ -4,7 +4,8 @@ import {
     insertMaintenanceStaff,
     getMaintenanceStaffMember,
     updateMaintenanceStaff,
-    updateMaintenanceStaffStatus
+    updateMaintenanceStaffStatus,
+    deleteMaintenanceStaff
 } from "../controllers/maintenance-staff.controller.js";
 
 const router = Router();
@@ -14,5 +15,6 @@ router.post("/", insertMaintenanceStaff);
 router.get("/:id", getMaintenanceStaffMember);
 router.put("/:id", updateMaintenanceStaff);
 router.patch("/:id/status", updateMaintenanceStaffStatus);
+router.delete("/:id", deleteMaintenanceStaff);
 
 export default router;
