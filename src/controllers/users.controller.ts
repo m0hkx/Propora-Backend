@@ -14,3 +14,7 @@ export function getUser(req: Request, res: Response) {
     id: req.params.id
   })
 }
+
+export function insertUser(req: Request, res: Response) {
+  
+}

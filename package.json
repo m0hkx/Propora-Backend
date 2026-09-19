@@ -6,14 +6,19 @@
   "author": "",
   "type": "module",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx --watch src/app.ts",
+    "start": "tsx src/app.ts"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^18.0.1",
+    "express": "^5.2.1",
+    "mongodb": "^7.6.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "@types/node": "^26.6.1"
+    "@types/node": "^26.6.1",
+    "tsx": "^4.23.13"
   }
 }
