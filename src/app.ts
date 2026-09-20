@@ -18,9 +18,14 @@ import { connectDatabase } from './database.js';
 import { protect } from './middleware/auth.js';
 
 const app: Express = express();
-const port: number = 3000;
+const port: number = Number(process.env.PORT) || 3000;
+const isProduction = process.env.NODE_ENV === "production";
 
 await connectDatabase();
+
+if (isProduction) {
+  app.set("trust proxy", 1);
+}
 
 app.use(express.json());
 
@@ -38,7 +43,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // Change in production
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
