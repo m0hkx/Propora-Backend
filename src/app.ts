@@ -29,9 +29,23 @@ if (isProduction) {
 
 app.use(express.json());
 
+// CORS_ORIGIN is a comma-separated list of allowed origins (full scheme + host,
+// e.g. "https://propora-frontend.netlify.app,http://localhost:5173"), so the same
+// backend can serve both a deployed frontend and a local dev server.
+const allowedOrigins = (process.env.CORS_ORIGIN ?? "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
     credentials: true,
   })
 );
