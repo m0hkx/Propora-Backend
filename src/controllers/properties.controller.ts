@@ -3,15 +3,34 @@ import { ObjectId } from "mongodb";
 import { getDatabase } from "../database.js";
 import { parseId, withId } from "../lib/serialize.js";
 
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+
 export async function getProperties(req: Request, res: Response) {
     const database = getDatabase();
     const properties = database.collection("properties");
 
-    const allProp = await properties.find({ userId: new ObjectId(req.session.userId) }).toArray();
+    const requestedLimit = Math.floor(Number(req.query.limit));
+    const limit = Number.isFinite(requestedLimit) && requestedLimit > 0
+        ? Math.min(requestedLimit, MAX_PAGE_SIZE)
+        : DEFAULT_PAGE_SIZE;
+    const requestedPage = Math.floor(Number(req.query.page));
+    const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+
+    const filter = { userId: new ObjectId(req.session.userId) };
+
+    const [total, rows] = await Promise.all([
+        properties.countDocuments(filter),
+        properties.find(filter).sort({ _id: 1 }).skip((page - 1) * limit).limit(limit).toArray(),
+    ]);
 
     res.status(200).json({
-        properties: allProp.map(withId)
-    })
+        properties: rows.map(withId),
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+    });
 }
 
 export async function insertProperties(req: Request, res: Response) {
