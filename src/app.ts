@@ -16,6 +16,7 @@ import dashboardRouter from "./routes/dashboard.routes.js";
 
 import { connectDatabase } from './database.js';
 import { protect } from './middleware/auth.js';
+import { startPaymentAutomation } from './jobs/payment-automation.schedule.js';
 
 const app: Express = express();
 const port: number = Number(process.env.PORT) || 3000;
@@ -81,3 +82,12 @@ app.use("/dashboard", protect, dashboardRouter);
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+const stopPaymentAutomation = startPaymentAutomation();
+
+for (const signal of ["SIGTERM", "SIGINT"] as const) {
+  process.once(signal, () => {
+    stopPaymentAutomation();
+    process.exit(0);
+  });
+}

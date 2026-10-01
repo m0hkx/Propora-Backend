@@ -10,6 +10,7 @@ Express 5, TypeScript (`nodenext` ESM), MongoDB (native driver, no ODM), express
 
 - `npm run dev` — `tsx --watch src/app.ts`, runs against `.env` in this directory
 - `npm run start` — `tsx src/app.ts` (no watch)
+- `npm run seed` — inserts the demo account and sample data (`--reset` to regenerate it)
 
 There is no `build`, `lint`, or working `test` script (`test` is the default npm stub and just exits 1). `tsconfig.json` declares `outDir`/`declaration` but nothing invokes `tsc` — treat this as a dev-only setup, not a compiled deployable, unless asked to add one.
 
@@ -32,6 +33,10 @@ Every document carries a `userId: ObjectId` set from `req.session.userId` (never
 ### Auth
 
 Session-based via `express-session`, storing `userId` (typed in `src/types/express-session.d.ts`). `src/middleware/auth.ts` exports `protect`, mounted in `app.ts` on every router except `/users` (`/users/register`, `/users/login`, `/users/logout`, `/users/session` are the only unauthenticated-by-necessity routes; `/users/:id` is also unprotected but strips the password field). Passwords are hashed with `bcryptjs` (pure-JS, no native build step — deliberately not `bcrypt`, which needs `node-gyp`).
+
+### Payment automation
+
+Monthly rent payments are generated and late ones flipped to Overdue by a background job, not by the frontend. `src/lib/paymentAutomation.ts` holds the pure rules (period/due-date/overdue maths and `planMonthlyPayments`), `src/jobs/payment-automation.job.ts` applies them to MongoDB for every account, and `src/jobs/payment-automation.schedule.ts` runs it with `node-cron` at 00:05 UTC daily plus once on boot (catch-up for days the process was asleep). The schedule lives in the API process, so it only fires while the server is awake. Generated rows carry `source: "automation"` and a partial unique index on `(leaseId, period)` guarantees one per lease per month even if runs overlap.
 
 ### File uploads
 
