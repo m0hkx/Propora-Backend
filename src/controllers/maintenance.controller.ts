@@ -15,6 +15,14 @@ function serializeRequest(doc: Record<string, unknown>) {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+// One day of grace: a user whose local date is behind UTC must still be able to pick "today".
+function isPastDate(value: unknown): boolean {
+    if (typeof value !== "string" || value === "") return false;
+    const earliest = new Date();
+    earliest.setUTCDate(earliest.getUTCDate() - 1);
+    return value < earliest.toISOString().slice(0, 10);
+}
+
 export async function getMaintenanceRequests(req: Request, res: Response) {
     const database = getDatabase();
     const maintenance = database.collection("maintenance");
@@ -29,6 +37,10 @@ export async function insertMaintenanceRequest(req: Request, res: Response) {
     const maintenance = database.collection("maintenance");
     const staff = database.collection("staff");
     const notifications = database.collection("notifications");
+
+    if (isPastDate(req.body.scheduledDate)) {
+        return res.status(400).json({ message: "Scheduled date cannot be in the past" });
+    }
 
     const userId = new ObjectId(req.session.userId);
     const reported = today();
@@ -95,6 +107,10 @@ export async function updateMaintenanceRequest(req: Request, res: Response) {
 
     const id = parseId(req.params.id);
     if (!id) return res.status(400).json({ message: "Invalid maintenance request id" });
+
+    if (isPastDate(req.body.scheduledDate)) {
+        return res.status(400).json({ message: "Scheduled date cannot be in the past" });
+    }
 
     const patch: Record<string, unknown> = {};
     const fields = ["scope", "title", "description", "category", "priority", "status", "scheduledDate", "completedDate"] as const;
