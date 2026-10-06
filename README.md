@@ -73,10 +73,10 @@ src/
 
 ## Learn more
 
-The [main documentation](../docs/README.md) covers everything else:
+The [main documentation](https://github.com/m0hkx/Propora/blob/main/docs/README.md) covers everything else:
 
-- [API reference](../docs/06-api-reference.md): every endpoint
-- [Database design](../docs/05-database-design.md) and [system design](../docs/04-system-design.md)
-- [Full setup guide](../docs/08-getting-started.md)
+- [API reference](https://github.com/m0hkx/Propora/blob/main/docs/06-api-reference.md): every endpoint
+- [Database design](https://github.com/m0hkx/Propora/blob/main/docs/05-database-design.md) and [system design](https://github.com/m0hkx/Propora/blob/main/docs/04-system-design.md)
+- [Full setup guide](https://github.com/m0hkx/Propora/blob/main/docs/08-getting-started.md)
 
 **Frontend:** [Propora-Frontend](https://github.com/m0hkx/Propora-Frontend)
